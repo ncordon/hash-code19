@@ -36,6 +36,7 @@ def read_photos(filename):
   return photos
 
 def david():
+  photos = read_photos(sys.argv[1])
   solution = [0]
   # used = [False for _ in range(len(photos))]
   unused = set(list(range(len(photos)))) - {0}
@@ -109,18 +110,19 @@ def david():
 
 
 if __name__ == '__main__':
-  photos = read_photos(sys.argv[1])
+  david()
+  # photos = read_photos(sys.argv[1])
 
-  print(len(list(filter(lambda p: p.orientation == 'H', photos))) +
-        len(list(filter(lambda p: p.orientation == 'V', photos)))//2)
+  # print(len(list(filter(lambda p: p.orientation == 'H', photos))) +
+  #       len(list(filter(lambda p: p.orientation == 'V', photos)))//2)
 
-  verts = []
+  # verts = []
 
-  for p in photos:
-    if p.orientation == 'H':
-      print(p.pos)
-    else:
-      verts.append(p)
+  # for p in photos:
+  #   if p.orientation == 'H':
+  #     print(p.pos)
+  #   else:
+  #     verts.append(p)
 
-  for i in range(0, len(verts)-1, 2):
-    print(verts[i].pos, verts[i+1].pos)
+  # for i in range(0, len(verts)-1, 2):
+  #   print(verts[i].pos, verts[i+1].pos)
