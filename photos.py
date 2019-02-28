@@ -14,7 +14,10 @@ class Photo:
     self.tags = tags
 
 def interest(i, j):
-  return min(len(i.tags & j.tags), len(i.tags - j.tags), len(j.tags - i.tags))
+  int_size = len(i.tags & j.tags)
+  return min(int_size,
+             len(i.tags) - int_size,
+             len(j.tags) - int_size)
 
 def photosum(i, j):
   return Photo("{} {}".format(i.pos, j.pos), 'H', i.tags | j.tags)
@@ -65,8 +68,8 @@ def david():
 
   while len(unused_h) > 0 or len(unused_v) > 1:
 
-    next_h = set(itertools.islice(unused_h, min(10, len(unused_h))))
-    next_v = set(itertools.islice(unused_v, min(10, len(unused_v))))
+    next_h = set(itertools.islice(unused_h, min(30, len(unused_h))))
+    next_v = set(itertools.islice(unused_v, min(30, len(unused_v))))
 
     if len(next_h) > 0:
       best_pos = [max(next_h, key = lambda p: interest(previous, photos[order_h[p]]))]
