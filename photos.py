@@ -39,20 +39,29 @@ def read_photos(filename):
 
   return photos
 
+def mysort(x, photos):
+    return sorted(x, key = lambda i: len(photos[i].tags))
+
 def david():
   photos = read_photos(sys.argv[1])
+  order_h = mysort([i for i in range(len(photos)) if photos[i].orientation == 'H'], photos)
+  order_v = mysort([i for i in range(len(photos)) if photos[i].orientation == 'V'], photos)
   
   # used = [False for _ in range(len(photos))]
-  unused_h = set([i for i in range(len(photos)) if photos[i].orientation == 'H'])
-  unused_v = set([i for i in range(len(photos)) if photos[i].orientation == 'V'])
+  unused_h = set(range(len(order_h)))
+  unused_v = set(range(len(order_v)))
   solution = []
 
   if len(unused_h) > 0:
-    solution.append(unused_h.pop())
+    solution.append(order_h[unused_h.pop()])
   else:
-    solution.append([unused_v.pop(), unused_v.pop()])
-    
+    solution.append([order_v[unused_v.pop()], order_v[unused_v.pop()]])
+
   previous = photos[0]
+  if type(solution[0]) == list:
+      previous = photosum(photos[solution[0][0]], photos[solution[0][1]])
+  else:
+      previous = photos[solution[0]]
 
   while len(unused_h) > 0 or len(unused_v) > 1:
     best_score = -1
@@ -62,7 +71,7 @@ def david():
     next_v = set(itertools.islice(unused_v, min(10, len(unused_v))))
 
     for p in next_h:
-      cur_score = interest(previous, photos[p])
+      cur_score = interest(previous, photos[order_h[p]])
 
       if cur_score > best_score:
         best_score = cur_score
@@ -71,7 +80,7 @@ def david():
     if len(next_v) >= 2:
       for p in next_v:
         for q in next_v - {p}:
-          slide = photosum(photos[p], photos[q])
+          slide = photosum(photos[order_v[p]], photos[order_v[q]])
           cur_score = interest(previous, slide)
 
           if cur_score > best_score:
@@ -82,13 +91,13 @@ def david():
 
     if len(best_pos) > 1:
       unused_v = unused_v - {best_pos[0], best_pos[1]}
-      solution.append(best_pos)
-      previous = photosum(photos[best_pos[0]], photos[best_pos[1]])
+      solution.append([order_v[best_pos[0]], order_v[best_pos[1]]])
+      previous = photosum(photos[order_v[best_pos[0]]], photos[order_v[best_pos[1]]])
       #eprint("{} {}".format(best_pos[0], best_pos[1]))
     else:
       unused_h = unused_h - {best_pos[0]}
-      solution.append(best_pos[0])
-      previous = photos[best_pos[0]]
+      solution.append(order_h[best_pos[0]])
+      previous = photos[order_h[best_pos[0]]]
       #eprint(best_pos[0])
 
   print(len(solution))
