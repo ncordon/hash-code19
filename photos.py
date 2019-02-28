@@ -1,13 +1,7 @@
 #! /usr/bin/python3
 import sys
 
-FILE_NAME = sys.argv[1]
-first_line = True
-
 O = dict(h = 'H', v = 'V')
-
-photos = []
-# tags = dict()
 
 class Photo:
   def __init__(self, orientation, tags):
@@ -23,30 +17,37 @@ def photosum(i, j):
 def difference(i, j):
   return len(i.tags) + len(j.tags) - len(i.tags | j.tags)
 
-with open(FILE_NAME) as f:
-  for line in f:
-    if first_line:
-      N = int(line)
-      first_line = False
+
+def read_photos(filename):
+  photos = []
+  first_line = True
+
+  with open(filename) as f:
+    for line in f:
+      if first_line:
+        N = int(line)
+        first_line = False
+      else:
+        orientation = line[0]
+        tags = frozenset(line.split()[2:])
+        photos.append(Photo(orientation,tags))
+
+  return photos
+
+
+if __name__ == '__main__':
+  photos = read_photos(sys.argv[1])
+
+  print(len(list(filter(lambda p: p.orientation == 'H', photos))) +
+        len(list(filter(lambda p: p.orientation == 'V', photos)))//2)
+
+  verts = []
+
+  for p in range(len(photos)):
+    if photos[p].orientation == 'H':
+      print(p)
     else:
-      orientation = line[0]
-      tags = frozenset(line.split()[2:])
-      photos.append(Photo(orientation,tags))
+      verts.append(p)
 
-# print(photos[2].tags)
-# print(interest(photos[1], photos[2]))
-
-M = len(list(filter(lambda p: p.orientation == 'H', photos))) + len(list(filter(lambda p: p.orientation == 'V', photos)))//2
-
-print(M)
-
-verts = []
-
-for p in range(len(photos)):
-  if photos[p].orientation == 'H':
-    print(p)
-  else:
-    verts.append(p)
-
-for p in range(0, len(verts)-1, 2):
-  print(verts[p], verts[p+1])
+  for p in range(0, len(verts)-1, 2):
+    print(verts[p], verts[p+1])
