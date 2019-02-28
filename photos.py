@@ -46,7 +46,7 @@ def david():
   photos = read_photos(sys.argv[1])
   order_h = mysort([i for i in range(len(photos)) if photos[i].orientation == 'H'], photos)
   order_v = mysort([i for i in range(len(photos)) if photos[i].orientation == 'V'], photos)
-  
+
   # used = [False for _ in range(len(photos))]
   unused_h = set(range(len(order_h)))
   unused_v = set(range(len(order_v)))
@@ -64,18 +64,16 @@ def david():
       previous = photos[solution[0]]
 
   while len(unused_h) > 0 or len(unused_v) > 1:
-    best_score = -1
-    best_pos = [-1]
 
     next_h = set(itertools.islice(unused_h, min(10, len(unused_h))))
     next_v = set(itertools.islice(unused_v, min(10, len(unused_v))))
 
-    for p in next_h:
-      cur_score = interest(previous, photos[order_h[p]])
-
-      if cur_score > best_score:
-        best_score = cur_score
-        best_pos = [p]
+    if len(next_h) > 0:
+      best_pos = [max(next_h, key = lambda p: interest(previous, photos[order_h[p]]))]
+      best_score = interest(previous, photos[order_h[best_pos[0]]])
+    else:
+      best_score = -1
+      best_pos = [-1]
 
     if len(next_v) >= 2:
       for p in next_v:
