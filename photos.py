@@ -6,7 +6,7 @@ O = dict(h = 'H', v = 'V')
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-    
+
 class Photo:
   def __init__(self, pos, orientation, tags):
     self.pos = pos
@@ -36,7 +36,7 @@ def read_photos(filename):
         orientation = line[0]
         tags = frozenset(line.split()[2:])
         photos.append(Photo(pos - 1, orientation, tags))
-        
+
   return photos
 
 def david():
@@ -56,7 +56,7 @@ def david():
 
     for p in next_h:
       cur_score = interest(previous, photos[p])
-      
+
       if cur_score > best_score:
         best_score = cur_score
         best_pos = [p]
@@ -64,12 +64,11 @@ def david():
     if len(next_v) < 2:
       unused_v = {}
       continue
-    
+
     for p in next_v:
       for q in next_v - {p}:
         slide = photosum(photos[p], photos[q])
         cur_score = interest(previous, slide)
-
         if cur_score > best_score:
           best_score = cur_score
           best_pos = [p, q]
@@ -90,23 +89,6 @@ def david():
       print(" ".join([str(y) for y in x]))
     else:
       print(str(x))
-    
-
-
-# M = len(list(filter(lambda p: p.orientation == 'H', photos))) + len(list(filter(lambda p: p.orientation == 'V', photos)))//2
-
-# print(M)
-
-# verts = []
-
-# for p in range(len(photos)):
-#   if photos[p].orientation == 'H':
-#     print(p)
-#   else:
-#     verts.append(p)
-
-# for p in range(0, len(verts)-1, 2):
-#   print(verts[p], verts[p+1])
 
 
 if __name__ == '__main__':
