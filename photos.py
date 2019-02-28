@@ -4,7 +4,8 @@ import sys
 O = dict(h = 'H', v = 'V')
 
 class Photo:
-  def __init__(self, orientation, tags):
+  def __init__(self, pos, orientation, tags):
+    self.pos = pos
     self.orientation = orientation
     self.tags = tags
 
@@ -12,7 +13,7 @@ def interest(i, j):
   return min(len(i.tags & j.tags), len(i.tags - j.tags), len(j.tags - i.tags))
 
 def photosum(i, j):
-  return Photo(O.h, i.tags | j.tags)
+  return Photo("{} {}".format(i.pos, j.pos), O.h, i.tags | j.tags)
 
 def difference(i, j):
   return len(i.tags) + len(j.tags) - len(i.tags | j.tags)
@@ -23,14 +24,14 @@ def read_photos(filename):
   first_line = True
 
   with open(filename) as f:
-    for line in f:
+    for pos, line in enumerate(f):
       if first_line:
         N = int(line)
         first_line = False
       else:
         orientation = line[0]
         tags = frozenset(line.split()[2:])
-        photos.append(Photo(orientation,tags))
+        photos.append(Photo(pos - 1, orientation, tags))
 
   return photos
 
@@ -43,11 +44,11 @@ if __name__ == '__main__':
 
   verts = []
 
-  for p in range(len(photos)):
-    if photos[p].orientation == 'H':
-      print(p)
+  for p in photos:
+    if p.orientation == 'H':
+      print(p.pos)
     else:
       verts.append(p)
 
-  for p in range(0, len(verts)-1, 2):
-    print(verts[p], verts[p+1])
+  for i in range(0, len(verts)-1, 2):
+    print(verts[i].pos, verts[i+1].pos)
