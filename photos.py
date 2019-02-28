@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 import sys
+import itertools
 
 O = dict(h = 'H', v = 'V')
 
@@ -47,7 +48,9 @@ def david():
     best_score = -1
     best_pos = [-1]
 
-    for p in unused:
+    next_ones = set(itertools.islice(unused, min(100, len(unused))))
+
+    for p in next_ones:
       cur_score = -1
       cur_pos = [-1]
     
@@ -63,7 +66,7 @@ def david():
           count_verts = 0
           unused = unused - {p}
           continue
-        for q in unused - {p}:
+        for q in next_ones - {p}:
           if photos[q].orientation == 'V':
             slide = photosum(photos[p], photos[q])
             cur_score = interest(previous, slide)
