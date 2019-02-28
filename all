@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./photos.py examples/a_example.txt > output/a
+./photos.py examples/b_lovely_landscapes.txt > output/b
+./photos.py examples/c_memorable_moments.txt > output/c
+./photos.py examples/d_pet_pictures.txt > output/d
+./photos.py examples/e_shiny_selfies.txt > output/e
