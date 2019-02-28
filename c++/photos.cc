@@ -69,7 +69,7 @@ int main() {
   string current_tag;
   cin >> num_photos;
   
-  vector<Photo> verticals;
+  list<Photo> verticals;
   vector<Slide> ordered_slides;
   vector<Slide> solution;
   
@@ -91,9 +91,34 @@ int main() {
   }
 
   // Tie each vertical to the following one
-  for (int i = 0; i < verticals.size(); i += 2) {
-    if (i + 1 < verticals.size())
-      ordered_slides.push_back(Slide(verticals[i], verticals[i + 1]));
+  while(!verticals.empty() && verticals.size() >= 2) {
+    auto photo = verticals.begin();
+    auto it = verticals.begin();
+    ++it;
+    auto end = verticals.begin();
+    int num_verticals = verticals.size();
+    advance(end, min(num_verticals, 1000));
+    list<Photo>::iterator best = it;
+    int min_intersection = numeric_limits<int>::max();
+    
+    while (it != end) {
+      int current_intersection = 0;
+      
+      for (auto tag: it->tags)
+        if (photo->tags.count(tag) > 0)
+          ++current_intersection;
+      
+      if (current_intersection < min_intersection) {
+        best = it;
+        min_intersection = current_intersection;
+      }
+      
+      ++it;
+    }
+
+    ordered_slides.push_back(Slide(*photo, *best));
+    verticals.erase(best);
+    verticals.erase(photo);
   }
 
   sort(ordered_slides.begin(), ordered_slides.end(), slideCompare);
