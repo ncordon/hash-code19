@@ -95,15 +95,13 @@ int main() {
     }
   }
 
-  
   num_horizontals = horizontals.size();
   num_verticals = verticals.size();
 
-
   // Greedy aproach for horizontal photos only
   auto current = horizontals.begin();
-  horizontals.erase(current);
   slides.push_back(Slide(*current));
+  horizontals.erase(current);
   
   while (!horizontals.empty()) {
     auto it = horizontals.begin();
@@ -114,7 +112,7 @@ int main() {
     while(it != horizontals.end()) {
       Slide next_slide = Slide(*it);
       int current_score = score(current_slide, next_slide);
-      
+
       if (current_score > max_score) {
         best = it;
         max_score = current_score;
@@ -123,9 +121,9 @@ int main() {
       ++it;
     }
 
-    current = it;
-    horizontals.erase(current);
+    current = best;
     slides.push_back(Slide(*current));
+    horizontals.erase(current);
   }
 
   cout << slides.size() << endl;
