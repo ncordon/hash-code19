@@ -44,6 +44,8 @@ if __name__ == '__main__':
 
   verts = []
 
+  photos.sort(key=lambda x: len(x.tags))
+
   for p in photos:
     if p.orientation == 'H':
       print(p.pos)
