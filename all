@@ -1,7 +1,16 @@
 #!/bin/bash
 
+echo "Ejemplo a"
 ./photos.py examples/a_example.txt > output/a
+
+echo "Ejemplo b"
 ./photos.py examples/b_lovely_landscapes.txt > output/b
+
+echo "Ejemplo c"
 ./photos.py examples/c_memorable_moments.txt > output/c
+
+echo "Ejemplo d"
 ./photos.py examples/d_pet_pictures.txt > output/d
+
+echo "Ejemplo e"
 ./photos.py examples/e_shiny_selfies.txt > output/e
