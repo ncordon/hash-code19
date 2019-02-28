@@ -37,8 +37,8 @@ int score(Slide &current, Slide &next) {
   
   int current_size = _current.tags.size();
   int next_size = _next.tags.size();
-  
-  if (current_size < next_size) {
+
+  if (current_size <= next_size) {
     int intersection = 0;
 
     for (auto tag : _current.tags) {
@@ -75,7 +75,7 @@ int main() {
       cin >> current_tag;
       tags.insert(current_tag);
     }
-
+    
     photos.push_back({horizontal_flag == 'H', i, tags});
 
     if (photos.back().horizontal) {
@@ -83,20 +83,19 @@ int main() {
     }
   }
 
-
   // Greedy aproach for horizontal photos only
-  auto current = slides.begin();
-  solution.push_back(*current);
-  slides.erase(current);
+  auto first = slides.begin();
+  solution.push_back(*first);
+  slides.erase(first);
   
   while (!slides.empty()) {
+    Slide current = solution.back();
     auto it = slides.begin();
-    list<Slide>::iterator best;
+    list<Slide>::iterator best = it;
     int max_score = -1;
     
     while(it != slides.end()) {
-      int current_score = score(*current, *it);
-      
+      int current_score = score(current, *it);
       if (current_score > max_score) {
         best = it;
         max_score = current_score;
@@ -105,9 +104,8 @@ int main() {
       ++it;
     }
     
-    current = best;
-    solution.push_back(*current);
-    slides.erase(current);
+    solution.push_back(*best);
+    slides.erase(best);
   }
 
   cout << solution.size() << endl;
