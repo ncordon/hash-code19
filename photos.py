@@ -13,11 +13,7 @@ def interest(i, j):
   return min(len(i.tags & j.tags), len(i.tags - j.tags), len(j.tags - i.tags))
 
 def photosum(i, j):
-<<<<<<< HEAD
-  return Photo('H', i.tags | j.tags)
-=======
-  return Photo("{} {}".format(i.pos, j.pos), O.h, i.tags | j.tags)
->>>>>>> ef8a85b7fdbb6c874b79a79c6250e77184818a3f
+  return Photo("{} {}".format(i.pos, j.pos), 'H', i.tags | j.tags)
 
 def difference(i, j):
   return len(i.tags) + len(j.tags) - len(i.tags | j.tags)
