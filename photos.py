@@ -4,6 +4,9 @@ import itertools
 
 O = dict(h = 'H', v = 'V')
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+    
 class Photo:
   def __init__(self, pos, orientation, tags):
     self.pos = pos
@@ -40,52 +43,46 @@ def david():
   photos = read_photos(sys.argv[1])
   solution = [0]
   # used = [False for _ in range(len(photos))]
-  unused = set(list(range(len(photos)))) - {0}
-  count_verts = len(list(filter(lambda p: p.orientation == 'V', photos)))
+  unused_h = set([i for i in range(len(photos)) if photos[i].orientation == 'H']) - {0}
+  unused_v = set([i for i in range(len(photos)) if photos[i].orientation == 'V']) - {0}
   previous = photos[0]
 
-  while len(unused) > 0:
+  while len(unused_h) > 0 or len(unused_v) > 0:
     best_score = -1
     best_pos = [-1]
 
-    next_ones = set(itertools.islice(unused, min(100, len(unused))))
+    next_h = set(itertools.islice(unused_h, min(2, len(unused_h))))
+    next_v = set(itertools.islice(unused_v, min(2, len(unused_v))))
 
-    for p in next_ones:
-      cur_score = -1
-      cur_pos = [-1]
-    
-      if photos[p].orientation == 'H':
-        cur_score = interest(previous, photos[p])
-        cur_pos = [p]
+    for p in next_h:
+      cur_score = interest(previous, photos[p])
       
+      if cur_score > best_score:
+        best_score = cur_score
+        best_pos = [p]
+
+    if len(next_v) < 2:
+      unused_v = {}
+      continue
+    
+    for p in next_v:
+      for q in next_v - {p}:
+        slide = photosum(photos[p], photos[q])
+        cur_score = interest(previous, slide)
+
         if cur_score > best_score:
           best_score = cur_score
-          best_pos = cur_pos
-      else:
-        if count_verts < 2:
-          count_verts = 0
-          unused = unused - {p}
-          continue
-        for q in next_ones - {p}:
-          if photos[q].orientation == 'V':
-            slide = photosum(photos[p], photos[q])
-            cur_score = interest(previous, slide)
-            cur_pos = [p, q]
-
-            if cur_score > best_score:
-              best_score = cur_score
-              best_pos = cur_pos
-
-    for x in best_pos:
-      unused = unused - {x}
+          best_pos = [p, q]
 
     if len(best_pos) > 1:
-      count_verts -= 2
+      unused_v = unused_v - {best_pos[0], best_pos[1]}
       solution.append(best_pos)
       previous = photosum(photos[best_pos[0]], photos[best_pos[1]])
     else:
+      unused_h = unused_h - {best_pos[0]}
       solution.append(best_pos[0])
       previous = photos[best_pos[0]]
+      # eprint(best_pos[0])
 
   print(len(solution))
   for x in solution:
