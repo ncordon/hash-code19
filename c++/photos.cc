@@ -12,29 +12,33 @@ struct Photo {
 
 
 struct Slide {
-  vector<Photo> photos;
+  unordered_set<Tag> tags;
+  vector<int> indexes;
 
   Slide(Photo horizontal) {
-    photos.push_back(horizontal);
+    tags = horizontal.tags;
+    indexes.push_back(horizontal.index);
   }
 
   Slide(Photo v1, Photo v2) {
-    photos.push_back(v1);
-    photos.push_back(v2);
+    indexes.push_back(v1.index);
+    indexes.push_back(v2.index);
+    tags = v1.tags;
+
+    for (auto tag: v2.tags) {
+      tags.insert(tag);
+    }
   }
 
   void print() {
-    if (photos.size() < 2)
-      cout << photos.front().index << endl;
-    else
-      cout << photos.front().index << " " << photos.back().index << endl;    
+    for (auto index: indexes)
+      cout << index << " ";
+
+    cout << endl;
   }  
 };
 
-int score(Slide &current, Slide &next) {
-  Photo& _current = current.photos.front();
-  Photo& _next = next.photos.front();
-  
+int score(Slide& _current, Slide& _next) {
   int current_size = _current.tags.size();
   int next_size = _next.tags.size();
 
@@ -50,8 +54,12 @@ int score(Slide &current, Slide &next) {
     return min( min(current_size - intersection, intersection),
                 (next_size - intersection) );
   } else {
-    return score(next, current);
+    return score(_next, _current);
   }
+}
+
+bool slideCompare(Slide& one, Slide& two) {
+  return one.tags.size() <  two.tags.size();
 }
 
 int main() {
@@ -61,8 +69,8 @@ int main() {
   string current_tag;
   cin >> num_photos;
   
-  list<Photo> photos;
-  list<Slide> slides;
+  vector<Photo> verticals;
+  vector<Slide> ordered_slides;
   vector<Slide> solution;
   
   for (int i = 0; i < num_photos; ++i) {
@@ -75,15 +83,23 @@ int main() {
       cin >> current_tag;
       tags.insert(current_tag);
     }
-    
-    photos.push_back({horizontal_flag == 'H', i, tags});
 
-    if (photos.back().horizontal) {
-      slides.push_back(Slide(photos.back()));
-    }
+    if (horizontal_flag == 'H')
+      ordered_slides.push_back(Slide(Photo({true, i, tags})));
+    else
+      verticals.push_back(Photo({false, i, tags}));
   }
 
-  // Greedy aproach for horizontal photos only
+  // Tie each vertical to the following one
+  for (int i = 0; i < verticals.size(); i += 2) {
+    if (i + 1 < verticals.size())
+      ordered_slides.push_back(Slide(verticals[i], verticals[i + 1]));
+  }
+
+  sort(ordered_slides.begin(), ordered_slides.end(), slideCompare);
+  list<Slide> slides(ordered_slides.begin(), ordered_slides.end());
+  
+  // Greedy aproach
   auto first = slides.begin();
   solution.push_back(*first);
   slides.erase(first);
@@ -91,10 +107,14 @@ int main() {
   while (!slides.empty()) {
     Slide current = solution.back();
     auto it = slides.begin();
+    auto end = slides.begin();
+    int num_slides = slides.size();
+    advance(end, min(num_slides, 1000));
+    
     list<Slide>::iterator best = it;
     int max_score = -1;
     
-    while(it != slides.end()) {
+    while(it != end) {
       int current_score = score(current, *it);
       if (current_score > max_score) {
         best = it;
