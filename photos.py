@@ -1,6 +1,7 @@
 #! /usr/bin/python3
+import sys
 
-FILE_NAME = "a_example.txt"
+FILE_NAME = sys.argv[1]
 first_line = True
 
 photos = []
@@ -20,3 +21,5 @@ with open(FILE_NAME) as f:
       orientation = line[0]
       tags = line.split()[2:]
       photos.append(Photo(orientation,tags))
+
+print(photos[2].tags)
