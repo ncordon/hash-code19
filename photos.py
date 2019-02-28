@@ -36,6 +36,11 @@ with open(FILE_NAME) as f:
 # print(photos[2].tags)
 # print(interest(photos[1], photos[2]))
 
+solution = []
+# used = [False for _ in range(len(photos))]
+unused = set(list(range(len(photos))))
+
+
 print(len(list(filter(lambda p: p.orientation == 'H', photos))))
 for p in range(len(photos)):
   if photos[p].orientation == 'H':
