@@ -41,18 +41,25 @@ def read_photos(filename):
 
 def david():
   photos = read_photos(sys.argv[1])
-  solution = [0]
+  
   # used = [False for _ in range(len(photos))]
-  unused_h = set([i for i in range(len(photos)) if photos[i].orientation == 'H']) - {0}
-  unused_v = set([i for i in range(len(photos)) if photos[i].orientation == 'V']) - {0}
+  unused_h = set([i for i in range(len(photos)) if photos[i].orientation == 'H'])
+  unused_v = set([i for i in range(len(photos)) if photos[i].orientation == 'V'])
+  solution = []
+
+  if len(unused_h) > 0:
+    solution.append(unused_h.pop())
+  else:
+    solution.append([unused_v.pop(), unused_v.pop()])
+    
   previous = photos[0]
 
-  while len(unused_h) > 0 or len(unused_v) > 0:
+  while len(unused_h) > 0 or len(unused_v) > 1:
     best_score = -1
     best_pos = [-1]
 
-    next_h = set(itertools.islice(unused_h, min(2, len(unused_h))))
-    next_v = set(itertools.islice(unused_v, min(2, len(unused_v))))
+    next_h = set(itertools.islice(unused_h, min(10, len(unused_h))))
+    next_v = set(itertools.islice(unused_v, min(10, len(unused_v))))
 
     for p in next_h:
       cur_score = interest(previous, photos[p])
@@ -61,33 +68,36 @@ def david():
         best_score = cur_score
         best_pos = [p]
 
-    if len(next_v) < 2:
-      unused_v = {}
-      continue
+    if len(next_v) >= 2:
+      for p in next_v:
+        for q in next_v - {p}:
+          slide = photosum(photos[p], photos[q])
+          cur_score = interest(previous, slide)
 
-    for p in next_v:
-      for q in next_v - {p}:
-        slide = photosum(photos[p], photos[q])
-        cur_score = interest(previous, slide)
-        if cur_score > best_score:
-          best_score = cur_score
-          best_pos = [p, q]
+          if cur_score > best_score:
+            best_score = cur_score
+            best_pos = [p, q]
+    else:
+      unused_v = {}
 
     if len(best_pos) > 1:
       unused_v = unused_v - {best_pos[0], best_pos[1]}
       solution.append(best_pos)
       previous = photosum(photos[best_pos[0]], photos[best_pos[1]])
+      #eprint("{} {}".format(best_pos[0], best_pos[1]))
     else:
       unused_h = unused_h - {best_pos[0]}
       solution.append(best_pos[0])
       previous = photos[best_pos[0]]
-      # eprint(best_pos[0])
+      #eprint(best_pos[0])
 
   print(len(solution))
   for x in solution:
     if type(x) == list:
-      print(" ".join([str(y) for y in x]))
+      assert(photos[x[0]].orientation == 'V' and photos[x[1]].orientation == 'V')
+      print("{} {}".format(photos[x[0]].pos, photos[x[1]].pos))
     else:
+      assert(photos[x].orientation == 'H')
       print(str(x))
 
 
