@@ -4,10 +4,7 @@ import sys
 FILE_NAME = sys.argv[1]
 first_line = True
 
-O = {
-  h: 'H',
-  v: 'V'
-}
+O = dict(h = 'H', v = 'V')
 
 photos = []
 # tags = dict()
