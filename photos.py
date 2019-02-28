@@ -23,6 +23,9 @@ def interest(i, j):
 def photosum(i, j):
   return Photo(O.h, i.tags | j.tags)
 
+def difference(i, j):
+  return len(i.tags) + len(j.tags) - len(i.tags | j.tags)
+
 with open(FILE_NAME) as f:
   for line in f:
     if first_line:
@@ -32,7 +35,7 @@ with open(FILE_NAME) as f:
       orientation = line[0]
       tags = set(line.split()[2:])
       photos.append(Photo(orientation,tags))
-      
+
 # print(photos[2].tags)
 # print(interest(photos[1], photos[2]))
 
