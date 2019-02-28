@@ -6,6 +6,7 @@ typedef string Tag;
 struct Photo {
   // If it is not horizontal, it is vertical
   bool horizontal;
+  int index;
   unordered_set<Tag> tags;
 };
 
@@ -23,22 +24,11 @@ struct Slide {
   }
 
   void print() {
-    for (auto photo: photos) {
-      if (photo.horizontal)
-        cout << "H" << " ";
-      else
-        cout << "V" << " ";
-      
-      cout << photo.tags.size() << " ";
-
-      for (auto tag : photo.tags) {
-        cout << tag << " ";
-      }
-      
-      cout << endl;
-    }
-  }
-  
+    if (photos.size() < 2)
+      cout << photos.front().index << endl;
+    else
+      cout << photos.front().index << " " << photos.back().index << endl;    
+  }  
 };
 
 int score(Slide &current, Slide &next) {
@@ -70,12 +60,10 @@ int main() {
   char horizontal_flag;
   string current_tag;
   cin >> num_photos;
-  int num_horizontals;
-  int num_verticals;
   
-  list<Photo> horizontals;
-  list<Photo> verticals;
-  vector<Slide> slides;
+  list<Photo> photos;
+  list<Slide> slides;
+  vector<Slide> solution;
   
   for (int i = 0; i < num_photos; ++i) {
     cin >> horizontal_flag;
@@ -88,31 +76,27 @@ int main() {
       tags.insert(current_tag);
     }
 
-    if (horizontal_flag == 'H') {
-      horizontals.push_back({true, tags});
-    } else {
-      verticals.push_back({false, tags});
+    photos.push_back({horizontal_flag == 'H', i, tags});
+
+    if (photos.back().horizontal) {
+      slides.push_back(Slide(photos.back()));
     }
   }
 
-  num_horizontals = horizontals.size();
-  num_verticals = verticals.size();
 
   // Greedy aproach for horizontal photos only
-  auto current = horizontals.begin();
-  slides.push_back(Slide(*current));
-  horizontals.erase(current);
+  auto current = slides.begin();
+  solution.push_back(*current);
+  slides.erase(current);
   
-  while (!horizontals.empty()) {
-    auto it = horizontals.begin();
-    list<Photo>::iterator best;
+  while (!slides.empty()) {
+    auto it = slides.begin();
+    list<Slide>::iterator best;
     int max_score = -1;
-    Slide current_slide = Slide(*current);
     
-    while(it != horizontals.end()) {
-      Slide next_slide = Slide(*it);
-      int current_score = score(current_slide, next_slide);
-
+    while(it != slides.end()) {
+      int current_score = score(*current, *it);
+      
       if (current_score > max_score) {
         best = it;
         max_score = current_score;
@@ -120,15 +104,15 @@ int main() {
       
       ++it;
     }
-
+    
     current = best;
-    slides.push_back(Slide(*current));
-    horizontals.erase(current);
+    solution.push_back(*current);
+    slides.erase(current);
   }
 
-  cout << slides.size() << endl;
+  cout << solution.size() << endl;
   
-  for (auto slide : slides) {
+  for (auto slide : solution) {
     slide.print();
   }
   
