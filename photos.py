@@ -12,6 +12,8 @@ class Photo:
     self.orientation = orientation
     self.tags = tags
 
+def interest(i, j):
+  return min(len(i.tags & j.tags), len(i.tags - j.tags), len(j.tags - i.tags))
 
 with open(FILE_NAME) as f:
   for line in f:
@@ -22,8 +24,9 @@ with open(FILE_NAME) as f:
       orientation = line[0]
       tags = set(line.split()[2:])
       photos.append(Photo(orientation,tags))
-
+      
 # print(photos[2].tags)
+print(interest(photos[1], photos[2]))
 
 print(len(list(filter(lambda p: p.orientation == 'H', photos))))
 for p in range(len(photos)):
