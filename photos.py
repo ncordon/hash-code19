@@ -126,6 +126,13 @@ if __name__ == '__main__':
   #     print(p.pos)
   #   else:
   #     verts.append(p)
+  # photos.sort(key=lambda x: len(x.tags))
+
+  # for p in photos:
+  #   if p.orientation == 'H':
+  #     print(p.pos)
+  #   else:
+  #     verts.append(p)
 
   # for i in range(0, len(verts)-1, 2):
   #   print(verts[i].pos, verts[i+1].pos)
