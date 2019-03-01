@@ -45,7 +45,7 @@ def read_photos(filename):
 def mysort(x, photos):
     return sorted(x, key = lambda i: len(photos[i].tags))
 
-def david():
+def greedy():
   photos = read_photos(sys.argv[1])
   order_h = mysort([i for i in range(len(photos)) if photos[i].orientation == 'H'], photos)
   order_v = mysort([i for i in range(len(photos)) if photos[i].orientation == 'V'], photos)
@@ -112,7 +112,7 @@ def david():
 
 
 if __name__ == '__main__':
-  david()
+  greedy()
   # photos = read_photos(sys.argv[1])
 
   # print(len(list(filter(lambda p: p.orientation == 'H', photos))) +
